@@ -8,13 +8,13 @@
 The parent class of all the users
 */
 class User
-{
-private:
-    
+{    
 protected:
     std::string title;
+    std::string id; //customer does NOT need one
+    std::string firstName, lastname;
+    std::string phoneNumber; 
 public:
-
     /*
     Default constructor for User class
     */
@@ -22,9 +22,10 @@ public:
 
 
     /*
-    Constructor for User class that takes in an argument which is a string
+    Constructor for User class that takes in arguments which are strings
     */
-    User(std::string);
+    User(std::string , std::string , std::string , std::string , std::string );
+
 
 
     /*
