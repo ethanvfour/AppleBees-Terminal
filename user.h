@@ -24,7 +24,7 @@ public:
     /*
     Constructor for User class that takes in an argument which is a string
     */
-    User(std::string title);
+    User(std::string);
 
 
     /*
