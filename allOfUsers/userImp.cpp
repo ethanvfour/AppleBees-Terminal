@@ -18,3 +18,8 @@ User::User(std::string title, std::string id, std::string fName, std::string lNa
     lastName = lName;
     phoneNumber = phoneNum;
 }
+
+void User::setTitle(std::string title)
+{
+    this->title = title;
+}

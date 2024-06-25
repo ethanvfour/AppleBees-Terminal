@@ -27,6 +27,11 @@ public:
     User(std::string title, std::string id, std::string fName, std::string lName, std::string phoneNum);
 
 
+    /*
+    Sets the title
+    */
+    void setTitle(std::string);
+
 
     /*
     Returns in string either admin, chef, waiter, or customer
@@ -36,10 +41,10 @@ public:
     /*
     Runs correct tablet screen
     */
-    virtual void run();
+    virtual void run() = 0;
 };
 
 
 
 
-#endif USER_HEADER
+#endif
