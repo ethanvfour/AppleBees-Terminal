@@ -7,7 +7,7 @@
 #include <ncurses.h>
 int main(int argc, char ** args)
 {
-    initscr();
+    /* initscr();
     cbreak();
     noecho();
     keypad(stdscr, TRUE);
@@ -17,8 +17,14 @@ int main(int argc, char ** args)
     int k = getch();
     
     endwin();
-    std::cout<<(char)k<<std::endl;
+    std::cout<<(char)k<<std::endl; */
 
+
+    User * test = new CustomerAtLobby();
+
+    test->run();
+   
+    delete test;
     
 
     return 0;

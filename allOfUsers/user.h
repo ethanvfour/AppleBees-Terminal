@@ -27,10 +27,6 @@ public:
     User(std::string title, std::string id, std::string fName, std::string lName, std::string phoneNum);
 
 
-    /*
-    Sets the title
-    */
-    void setTitle(std::string);
 
 
     /*
@@ -42,6 +38,11 @@ public:
     Runs correct tablet screen
     */
     virtual void run() = 0;
+
+    /*
+    Virual Deconstuctor
+    */
+    virtual ~User() = 0;
 };
 
 

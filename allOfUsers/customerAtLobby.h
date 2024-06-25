@@ -7,6 +7,10 @@
 #include <filesystem> //gonna be used to open db and see if another executable is currenly opening
 #include <fstream>
 #include <sstream>
+#include <ncurses.h>
+#include <cstdlib>
+#include <ctime>
+#include <unistd.h>
 
 
 /*
@@ -23,21 +27,47 @@ extern "C" void decryptString(char *str, int length);
 
 
 /*
+What the queue is gonna hold
+*/
+struct customerInfo
+{
+    std::string firstName, phoneN;
+    int queueNum;
+
+    /*
+    Default Constructor
+    */
+    customerInfo();
+
+    /*
+    Constructor with params
+    */
+    customerInfo(std::string, std::string, int);
+};
+
+
+
+
+/*
     DB is to look like
-    <queueNumber>,<firstName>,<phoneNumber>
+    "<firstName>" "<phoneNumber>"
 */
 class CustomerAtLobby : public User
 {
 private:
-    std::queue<int> customerInLine;
-
+    std::queue<customerInfo> customerInLine;
 
     /*
     Adds a customer to a queue
     */
-    void addToQueue();
-public:
+    void addToQueue(std:: string, std::string);
 
+
+    /*
+    Will refresh the queue
+    */
+    void refresh();
+public:
     /*
     Default constructor for Customer
     */
@@ -53,15 +83,11 @@ public:
     */
     std::string getTitlePrivilege();
 
-
     /*
     Deconstructor
     Going to call encrypt, and update db
     */
     ~CustomerAtLobby();
-
 };
-
-
 
 #endif

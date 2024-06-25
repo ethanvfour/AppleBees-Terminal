@@ -6,16 +6,13 @@ find_package(Curses REQUIRED)# for n curses?
 enable_language(ASM_NASM) # enabling asm for the use of ror and rol
 
 add_library(
-    user_imp
+    all_users
     allOfUsers/user.h
     allOfUsers/userImp.cpp
-)#adding user parent class
-
-add_library(
-    customerLobby
     allOfUsers/customerAtLobby.h
     allOfUsers/customerAtLobbyImp.cpp
-)#adding child class customerAtLobby
+)#adding all users
+
 
 
 
@@ -29,10 +26,7 @@ add_library(
 )#adding some cool functions
 
 
-
-
-add_executable(appleBees main.cpp encrypt.asm)
-target_link_libraries(appleBees PRIVATE user_imp)
-target_link_libraries(appleBees PRIVATE customerLobby)
+add_executable(appleBees main.cpp outsideFunctions/encrypt.asm)
+target_link_libraries(appleBees PRIVATE all_users)
 target_link_libraries(appleBees PRIVATE coolFunc)
 target_link_libraries(appleBees PRIVATE ${CURSES_LIBRARIES})
