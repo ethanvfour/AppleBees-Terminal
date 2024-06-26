@@ -171,14 +171,15 @@ void CustomerAtLobby::run()
 
     while (!done)
     {
+        timeout(0);
+        getch();
         coolOutput("");
-        std::cout << "\r" << RESET << std::setw(55) << std::setfill('*') << "" << std::endl;
+        std::cout << "\r" << RESET << std::setw(60) << std::setfill('*') << "" << std::endl<<std::flush;
         std::cout << "\rWelcome to " << RED << "AppleBee's!" << RESET " Press any button to reserve a spot!" << std::endl;
-        std::cout << "\r" << RESET << std::setw(55) << std::setfill('*') << "" << std::endl
+        std::cout << "\r" << RESET << std::setw(60) << std::setfill('*') << "" << std::endl
                   << std::flush;
-        std::cout << "\r";
+        std::cout << "\r ";
         timeout(60000);
-        refresh();
         uInput = getch();
         if (uInput == 27)
         {
@@ -197,27 +198,32 @@ void CustomerAtLobby::run()
             coolOutput("");
             // endwin();
             echo();
+            endwin();
+            coolOutput("");
             coolOutput("Hello there! What is the name for the reservation?\n\r**");
             // endwin();
-            ncursesUserInput(fName);
-            // initscr();
-            coolOutputNoClear("\n\rGreat! Hello ");
+            std::getline(std::cin, fName);
+            // ncursesUserInput(fName);
+            //  initscr();
+            coolOutput("");
+            // std::cin>>phoneNum;
+            coolOutputNoClear("\rGreat! Hello ");
             coolOutputNoClear(fName);
             coolOutputNoClear("! Now what is a good phone number to text you when your table is ready?\n\rFollow the format");
-            std::cout<<RED;
+            std::cout << RED;
             coolOutputNoClear("(***) *** - ****");
-            std::cout<<RESET;
+            std::cout << RESET;
             coolOutputNoClear("\n\r**");
-            std::getline(std::cin, phoneNum);
-
+           std::getline(std::cin, phoneNum);
             while (true)
             {
                 coolOutput("Lastly, how big is the party size?\n**");
-                std::getline(std::cin, phoneNum);
+                std::getline(std::cin, sizeOfParty);
+                sizeOfParty = "23";
                 bool goodStr = true;
-                for (int i = 0; i < phoneNum.length() && goodStr; i++)
+                for (int i = 0; i < sizeOfParty.length() - 1 && goodStr; i++)
                 {
-                    if (!(0x30 <= phoneNum[i] && phoneNum[i] <= 0x39))
+                    if (!(48 <= (int)sizeOfParty[i] && (int)sizeOfParty[i] <= 57))
                         goodStr = false;
                 }
                 if (goodStr)
@@ -228,6 +234,10 @@ void CustomerAtLobby::run()
                     waitThisLong(2);
                 }
             }
+            initscr();
+            cbreak();
+            keypad(stdscr, TRUE);
+            noecho();
 
             addToQueue(fName, phoneNum, stoi(sizeOfParty));
             coolOutput("Adding to queue...");
@@ -240,10 +250,10 @@ void CustomerAtLobby::run()
             coolOutputNoClear(" minutes.\n");
 
             waitThisLong(4);
-
-            noecho();
         }
     }
+    coolOutput("");
+    echo();
     endwin();
 }
 
@@ -288,11 +298,23 @@ CustomerAtLobby::~CustomerAtLobby()
 void ncursesUserInput(std::string &uInput)
 {
     bool nameDone = false;
+
     while (!nameDone)
     {
+
         int adder = getch();
-        if ((char)adder != '\n')
+        if (adder == 263)
+        {
+            if (uInput.length() > 1)
+                uInput.substr(0, uInput.length() - 1);
+            else
+                uInput = "";
+            std::cout << uInput;
+        }
+        else if ((char)adder != '\n')
+        {
             uInput += (char)adder;
+        }
         else
             nameDone = true;
     }

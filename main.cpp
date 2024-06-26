@@ -7,24 +7,75 @@
 #include <ncurses.h>
 int main(int argc, char ** args)
 {
-    /* initscr();
+    initscr();
     cbreak();
     noecho();
     keypad(stdscr, TRUE);
-    timeout(2000);
+    timeout(2000); 
 
 
-    int k = getch();
+    coolOutput("booting...\n");
+    waitThisLong(4);
+
+    int choice = -1;
+
+    User * test = nullptr;
+    bool firstTime = true;
+
+    while(choice != 54)
+    {
+        choice = getch();
+
+        if(firstTime)
+            firstTime = false;
+        else
+        {
+            coolOutput("restarting...\n");
+            waitThisLong(4);
+        }
+
+        switch (choice)
+        {
+        case 49: //1
+            /* code */
+            coolOutput("\n\rstarting tablet at entrance... ");
+            waitThisLong(2);
+            coolOutputNoClear("\n\rstarting in ");
+            for(int i = 3; i >= 1; i--)
+            {
+                coolOutputNoClear(std::to_string(i));
+                coolOutputNoClear(" ");
+                waitThisLong(1);
+            }
+            test = new CustomerAtLobby();
+            endwin();
+            test->run();
+            break;
+        case 50: //2
+
+            break;
+        case 51: //3
+            break;
+        case 52: //4
+            break;
+        case 53: //5
+            break;
+        case 54: //6
+            continue;
+        default:
+            break;
+        }
+
+        delete test;
+    }
+
+
+
     
-    endwin();
-    std::cout<<(char)k<<std::endl; */
 
-
-    User * test = new CustomerAtLobby();
-
-    test->run();
+    
    
-    delete test;
+    endwin();
     
 
     return 0;

@@ -96,5 +96,4 @@ Gets in user input the ncurses way
 */
 void ncursesUserInput(std::string &uInput);
 
-
 #endif
