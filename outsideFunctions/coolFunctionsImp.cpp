@@ -5,31 +5,31 @@ void nop()
     // a nop
 }
 
-void coolOutput(string wah)
+void coolOutput(std::string wah)
 {
-    cout << "\033[2J\033[1;1H" << flush;
+    std::cout << "\033[2J\033[1;1H" << std::flush;
     for (int i = 0; i < wah.length(); i++)
     {
-        cout << wah[i] << flush;
+        std::cout << wah[i] << std::flush;
         std::this_thread::sleep_for(std::chrono::milliseconds(30));
     }
 }
 
-void coolOutputNoClear(string wah)
+void coolOutputNoClear(std::string wah)
 {
     for (int i = 0; i < wah.length(); i++)
     {
-        cout << wah[i] << flush;
+        std::cout << wah[i] << std::flush;
         std::this_thread::sleep_for(std::chrono::milliseconds(30));
     }
 }
 
-void oooScaryOutput(string wah)
+void oooScaryOutput(std::string wah)
 {
-    cout << "\033[2J\033[1;1H" << flush;
+    std::cout << "\033[2J\033[1;1H" << std::flush;
     for (int i = 0; i < wah.length(); i++)
     {
-        cout << wah[i] << flush;
+        std::cout << wah[i] << std::flush;
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 }

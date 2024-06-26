@@ -32,7 +32,7 @@ What the queue is gonna hold
 struct customerInfo
 {
     std::string firstName, phoneN;
-    int queueNum;
+    int queueNum, howManyPeople;
 
     /*
     Default Constructor
@@ -42,7 +42,7 @@ struct customerInfo
     /*
     Constructor with params
     */
-    customerInfo(std::string, std::string, int);
+    customerInfo(std::string, std::string, int, int);
 };
 
 
@@ -50,7 +50,7 @@ struct customerInfo
 
 /*
     DB is to look like
-    "<firstName>" "<phoneNumber>"
+    "<firstName>" "<phoneNumber>" "<amountOfPeople>"
 */
 class CustomerAtLobby : public User
 {
@@ -60,13 +60,13 @@ private:
     /*
     Adds a customer to a queue
     */
-    void addToQueue(std:: string, std::string);
+    void addToQueue(std:: string, std::string, int);
 
 
     /*
     Will refresh the queue
     */
-    void refresh();
+    void Refresh();
 public:
     /*
     Default constructor for Customer
@@ -89,5 +89,12 @@ public:
     */
     ~CustomerAtLobby();
 };
+
+
+/*
+Gets in user input the ncurses way
+*/
+void ncursesUserInput(std::string &uInput);
+
 
 #endif

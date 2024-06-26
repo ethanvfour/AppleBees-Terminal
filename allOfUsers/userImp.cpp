@@ -19,3 +19,7 @@ User::User(std::string title, std::string id, std::string fName, std::string lNa
     phoneNumber = phoneNum;
 }
 
+User::~User()
+{
+    
+}

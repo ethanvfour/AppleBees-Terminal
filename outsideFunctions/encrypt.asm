@@ -25,7 +25,7 @@ encryptString:
             mov byte[rdi + r12], bl 
             inc r12
             cmp r12, rsi
-            jb goingThroughString
+            jb goingThroughString           
         
     pop r12
     pop rbx
