@@ -17,7 +17,6 @@ add_library(
 
 
 
-
 #some other libraries if needed that i made
 add_library(
     coolFunc

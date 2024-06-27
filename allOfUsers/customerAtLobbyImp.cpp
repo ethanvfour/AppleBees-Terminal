@@ -48,32 +48,38 @@ void CustomerAtLobby::addToQueue(std::string fNameAdder, std::string phoneNAdder
         while (getline(openDb, queue)) // read the text file
         {
             decryptString(&queue[0], queue.length());
-            std::stringstream ss(queue);
-            ss >> fName >> phoneN >> sizeOfParty;
-            // queueNum = stoi(tempQNum.substr(1, tempQNum.find('\"', 2)-1));
-            customerInLine.push(customerInfo(fName.substr(1, fName.find('\"') - 1), phoneN.substr(1, phoneN.find('\"') - 1), queueNum++, std::stoi(sizeOfParty.substr(1, sizeOfParty.find('\"') - 1))));
+
+            fName = queue.substr(0, queue.find('\"', 2) + 1);
+            queue = queue.substr(queue.find('\"', 2) + 3, queue.length());
+            phoneN = queue.substr(0, queue.find('\"', 2) + 2);
+            queue = queue.substr(queue.find('\"', 2) + 3, queue.length());
+            sizeOfParty = queue;
+            sizeOfParty = makeItANumber(sizeOfParty);
+
+            customerInLine.push(customerInfo(fName.substr(1, fName.find('\"') - 1), phoneN.substr(1, phoneN.find('\"') - 1), queueNum++, std::stoi(sizeOfParty)));
         }
     }
 
     customerInLine.push(customerInfo(fNameAdder, phoneNAdder, queueNum++, partySize));
     openDb.close();
-    std::queue<customerInfo> copy = customerInLine;
 
     std::ofstream replaceQueue("../dataBase/customerAtLobbyQueue.txt");
-    while (!copy.empty())
+    while (!customerInLine.empty())
     {
         std::string putter = "";
 
-        putter += "\"" + copy.front().firstName + "\" ";
-        putter += "\"" + copy.front().phoneN + "\" ";
-        putter += "\"" + std::to_string(copy.front().howManyPeople) + "\"";
+        putter += "\"" + customerInLine.front().firstName + "\" ";
+        putter += "\"" + customerInLine.front().phoneN + "\" ";
+        putter += "\"" + std::to_string(customerInLine.front().howManyPeople) + "\"";
+
         encryptString(&putter[0], putter.length());
 
         replaceQueue << putter << std::endl;
-        copy.pop();
+        customerInLine.pop();
     }
 
     std::filesystem::remove(path);
+    Refresh();
 }
 
 void CustomerAtLobby::Refresh()
@@ -105,55 +111,44 @@ void CustomerAtLobby::Refresh()
         std::string queue = "";
         std::string fName = "", phoneN = "", sizeOfParty = "";
 
-        while (getline(openDb, queue)) // read the text file
+        while (std::getline(openDb, queue)) // read the text file
         {
             decryptString(&queue[0], queue.length());
-            std::stringstream ss(queue);
-            ss >> fName >> phoneN >> sizeOfParty;
-            // queueNum = stoi(tempQNum.substr(1, tempQNum.find('\"', 2)-1));
-            customerInLine.push(customerInfo(fName.substr(1, fName.find('\"') - 1), phoneN.substr(1, phoneN.find('\"') - 1), queueNum++, std::stoi(sizeOfParty.substr(1, sizeOfParty.find('\"') - 1))));
+
+            fName = queue.substr(0, queue.find('\"', 2) + 1);
+            queue = queue.substr(queue.find('\"', 2) + 3, queue.length());
+            phoneN = queue.substr(0, queue.find('\"', 2) + 2);
+            queue = queue.substr(queue.find('\"', 2) + 3, queue.length());
+            sizeOfParty = queue;
+            sizeOfParty = makeItANumber(sizeOfParty);
+
+            customerInLine.push(customerInfo(fName.substr(1, fName.find('\"') - 1), phoneN.substr(1, phoneN.find('\"') - 1), queueNum++, std::stoi(sizeOfParty)));
         }
     }
     std::filesystem::remove(path);
 }
 
+void CustomerAtLobby::RefreshTables()
+{
+    if(tables == nullptr)
+    {
+        tables = new Table *[6];
+        for (int i = 0; i < 6; i++)
+        {
+            tables[i] = new Table[5];
+        }
+    }
+    
+}
+
 CustomerAtLobby::CustomerAtLobby() : User()
 {
     title = "customerAtLobbyWaiting";
-    std::filesystem::path path = "../dataBase/customerAtLobbyQueueSL.txt";
-
-    while (std::filesystem::exists(path))
-    {
-        // keeps waiting till it doesnt exist
-    }
-
-    std::ofstream spinLock("../dataBase/customerAtLobbyQueueSL.txt"); // spinlock
-    spinLock.close();
-
-    std::ifstream openDb("../dataBase/customerAtLobbyQueue.txt");
-    // closes immdiaetly
-    int queueNum = 1;
-    if (!openDb.is_open())
-    {
-        // not suppose to happen, assume queue is empty?
-    }
-    else
-    {
-        std::string queue = "";
-        std::string fName = "", phoneN = "", sizeOfParty = "";
-
-        while (getline(openDb, queue)) // read the text file
-        {
-            decryptString(&queue[0], queue.length());
-            std::stringstream ss(queue);
-            ss >> fName >> phoneN >> sizeOfParty;
-            // queueNum = stoi(tempQNum.substr(1, tempQNum.find('\"', 2)-1));
-            customerInLine.push(customerInfo(fName.substr(1, fName.find('\"') - 1), phoneN.substr(1, phoneN.find('\"') - 1), queueNum++, std::stoi(sizeOfParty.substr(1, sizeOfParty.find('\"') - 1))));
-        }
-    }
-
-    std::filesystem::remove(path); // removes spinlock
+    Refresh();
+    RefreshTables();
 }
+
+
 
 void CustomerAtLobby::run()
 {
@@ -174,7 +169,8 @@ void CustomerAtLobby::run()
         timeout(0);
         getch();
         coolOutput("");
-        std::cout << "\r" << RESET << std::setw(60) << std::setfill('*') << "" << std::endl<<std::flush;
+        std::cout << "\r" << RESET << std::setw(60) << std::setfill('*') << "" << std::endl
+                  << std::flush;
         std::cout << "\rWelcome to " << RED << "AppleBee's!" << RESET " Press any button to reserve a spot!" << std::endl;
         std::cout << "\r" << RESET << std::setw(60) << std::setfill('*') << "" << std::endl
                   << std::flush;
@@ -200,27 +196,77 @@ void CustomerAtLobby::run()
             echo();
             endwin();
             coolOutput("");
-            coolOutput("Hello there! What is the name for the reservation?\n\r**");
+
+            while (true)
+            {
+                coolOutput("Hello there! What is the name for the reservation?\n\r**");
+                std::getline(std::cin, fName);
+                bool goodName = true;
+
+                for (int i = 0; i < fName.length() && goodName; i++)
+                {
+                    if (fName[i] == '\"')
+                        goodName = false;
+                }
+                if (goodName)
+                    break;
+                else
+                {
+                    coolOutput("Not a valid name!\n");
+                    waitThisLong(2);
+                }
+            }
+
             // endwin();
-            std::getline(std::cin, fName);
+
             // ncursesUserInput(fName);
             //  initscr();
             coolOutput("");
             // std::cin>>phoneNum;
-            coolOutputNoClear("\rGreat! Hello ");
-            coolOutputNoClear(fName);
-            coolOutputNoClear("! Now what is a good phone number to text you when your table is ready?\n\rFollow the format");
-            std::cout << RED;
-            coolOutputNoClear("(***) *** - ****");
-            std::cout << RESET;
-            coolOutputNoClear("\n\r**");
-           std::getline(std::cin, phoneNum);
+            while (true)
+            {
+                coolOutputNoClear("\rGreat! Hello ");
+                coolOutputNoClear(fName);
+                coolOutputNoClear("! Now what is a good phone number to text you when your table is ready?\n\rFollow the format");
+                std::cout << RED;
+                coolOutputNoClear("*** *** ****");
+                std::cout << RESET;
+                coolOutputNoClear("\n\r**");
+                std::getline(std::cin, phoneNum);
+
+                bool goodNum = true;
+                if (phoneNum.length() != 12)
+                    goodNum = false;
+                for (int i = 0; i < phoneNum.length() && goodNum; i++)
+                {
+                    if (i == 3 || i == 7)
+                    {
+                        if (phoneNum[i] != ' ')
+                            goodNum = false;
+                    }
+                    else
+                    {
+                        if (!(0x30 <= phoneNum[i] && phoneNum[i] <= 0x39))
+                            goodNum = false;
+                    }
+                }
+                if (goodNum)
+                    break;
+                else
+                {
+                    coolOutput("Not a valid number!\n");
+                    waitThisLong(2);
+                }
+            }
             while (true)
             {
                 coolOutput("Lastly, how big is the party size?\n**");
                 std::getline(std::cin, sizeOfParty);
-                sizeOfParty = "23";
+                // sizeOfParty = "23";
                 bool goodStr = true;
+                if (sizeOfParty.length() >= 3)
+                    goodStr = false;
+
                 for (int i = 0; i < sizeOfParty.length() - 1 && goodStr; i++)
                 {
                     if (!(48 <= (int)sizeOfParty[i] && (int)sizeOfParty[i] <= 57))
@@ -234,12 +280,14 @@ void CustomerAtLobby::run()
                     waitThisLong(2);
                 }
             }
+
             initscr();
             cbreak();
             keypad(stdscr, TRUE);
             noecho();
 
             addToQueue(fName, phoneNum, stoi(sizeOfParty));
+
             coolOutput("Adding to queue...");
             waitThisLong(2);
 
@@ -254,7 +302,7 @@ void CustomerAtLobby::run()
     }
     coolOutput("");
     echo();
-    endwin();
+    // endwin();
 }
 
 std::string CustomerAtLobby::getTitlePrivilege()
@@ -285,7 +333,7 @@ CustomerAtLobby::~CustomerAtLobby()
         putter += "\"" + customerInLine.front().firstName + "\" ";
         putter += "\"" + customerInLine.front().phoneN + "\" ";
         putter += "\"" + std::to_string(customerInLine.front().howManyPeople) + "\"";
-
+        endwin();
         encryptString(&putter[0], putter.length());
 
         replaceQueue << putter << std::endl;
@@ -293,6 +341,7 @@ CustomerAtLobby::~CustomerAtLobby()
     }
 
     std::filesystem::remove(path); // removes spinlock
+    initscr();
 }
 
 void ncursesUserInput(std::string &uInput)
@@ -318,4 +367,15 @@ void ncursesUserInput(std::string &uInput)
         else
             nameDone = true;
     }
+}
+
+std::string makeItANumber(std::string str)
+{
+    std::string ret = "";
+    for (int i = 0; i < str.length(); i++)
+    {
+        if (0x30 <= str[i] && str[i] <= 0x39)
+            ret += str[i];
+    }
+    return ret;
 }

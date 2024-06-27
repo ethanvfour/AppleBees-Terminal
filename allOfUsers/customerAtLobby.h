@@ -1,8 +1,9 @@
-#ifndef CUSTOMER
-#define CUSTOMER
+#ifndef CUSTOMER_LOBBY
+#define CUSTOMER_LOBBY
 #include "user.h"
 #include "../outsideFunctions/coolFunctions.h"
 #include <iostream>
+#include "otherObj/table.h"
 #include <queue>
 #include <filesystem> //gonna be used to open db and see if another executable is currenly opening
 #include <fstream>
@@ -11,7 +12,6 @@
 #include <cstdlib>
 #include <ctime>
 #include <unistd.h>
-
 
 /*
 This function will take in a string and use the ror implication in assembly to encrypt each byte
@@ -25,6 +25,10 @@ String is passed by ref
 */
 extern "C" void decryptString(char *str, int length);
 
+/*
+Needed cuz stoi is acting like a baby, a big baby holy
+*/
+std::string makeItANumber(std::string str);
 
 /*
 What the queue is gonna hold
@@ -45,9 +49,6 @@ struct customerInfo
     customerInfo(std::string, std::string, int, int);
 };
 
-
-
-
 /*
     DB is to look like
     "<firstName>" "<phoneNumber>" "<amountOfPeople>"
@@ -55,18 +56,25 @@ struct customerInfo
 class CustomerAtLobby : public User
 {
 private:
+    /*
+    Gonna be a 2d array of a 6x5
+    Assuming the restaurant has 30 tables 
+    */
+    Table **tables = nullptr;
     std::queue<customerInfo> customerInLine;
 
     /*
     Adds a customer to a queue
     */
-    void addToQueue(std:: string, std::string, int);
-
+    void addToQueue(std::string, std::string, int);
 
     /*
     Will refresh the queue
     */
     void Refresh();
+
+    void RefreshTables();
+
 public:
     /*
     Default constructor for Customer
@@ -88,12 +96,13 @@ public:
     Going to call encrypt, and update db
     */
     ~CustomerAtLobby();
-};
 
+};
 
 /*
 Gets in user input the ncurses way
 */
 void ncursesUserInput(std::string &uInput);
+
 
 #endif

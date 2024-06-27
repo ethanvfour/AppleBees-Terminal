@@ -1,6 +1,5 @@
 #include "user.h"
 
-
 User::User()
 {
     title = "";
@@ -21,5 +20,4 @@ User::User(std::string title, std::string id, std::string fName, std::string lNa
 
 User::~User()
 {
-    
 }
