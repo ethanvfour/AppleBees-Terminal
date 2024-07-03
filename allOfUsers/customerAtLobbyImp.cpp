@@ -50,13 +50,15 @@ void CustomerAtLobby::addToQueue(std::string fNameAdder, std::string phoneNAdder
             decryptString(&queue[0], queue.length());
 
             fName = queue.substr(0, queue.find('\"', 2) + 1);
-            queue = queue.substr(queue.find('\"', 2) + 3, queue.length());
+
+            queue = queue.substr(queue.find('\"', 2) + 2, queue.length());
             phoneN = queue.substr(0, queue.find('\"', 2) + 2);
-            queue = queue.substr(queue.find('\"', 2) + 3, queue.length());
+
+            queue = queue.substr(queue.find('\"', 2) + 2, queue.length());
             sizeOfParty = queue;
             sizeOfParty = makeItANumber(sizeOfParty);
 
-            customerInLine.push(customerInfo(fName.substr(1, fName.find('\"') - 1), phoneN.substr(1, phoneN.find('\"') - 1), queueNum++, std::stoi(sizeOfParty)));
+            customerInLine.push(customerInfo(removeQuotations(fName.substr(1, fName.find('\"') - 2)), removeQuotations(phoneN.substr(1, phoneN.find('\"') - 2)), queueNum++, std::stoi(sizeOfParty)));
         }
     }
 
@@ -116,13 +118,15 @@ void CustomerAtLobby::Refresh()
             decryptString(&queue[0], queue.length());
 
             fName = queue.substr(0, queue.find('\"', 2) + 1);
-            queue = queue.substr(queue.find('\"', 2) + 3, queue.length());
+
+            queue = queue.substr(queue.find('\"', 2) + 2, queue.length());
             phoneN = queue.substr(0, queue.find('\"', 2) + 2);
-            queue = queue.substr(queue.find('\"', 2) + 3, queue.length());
+
+            queue = queue.substr(queue.find('\"', 2) + 2, queue.length());
             sizeOfParty = queue;
             sizeOfParty = makeItANumber(sizeOfParty);
 
-            customerInLine.push(customerInfo(fName.substr(1, fName.find('\"') - 1), phoneN.substr(1, phoneN.find('\"') - 1), queueNum++, std::stoi(sizeOfParty)));
+            customerInLine.push(customerInfo(removeQuotations(fName.substr(1, fName.find('\"') - 2)), removeQuotations(phoneN.substr(1, phoneN.find('\"') - 2)), queueNum++, std::stoi(sizeOfParty)));
         }
     }
     std::filesystem::remove(path);
@@ -130,7 +134,7 @@ void CustomerAtLobby::Refresh()
 
 void CustomerAtLobby::RefreshTables()
 {
-    if(tables == nullptr)
+    if (tables == nullptr)
     {
         tables = new Table *[6];
         for (int i = 0; i < 6; i++)
@@ -138,7 +142,123 @@ void CustomerAtLobby::RefreshTables()
             tables[i] = new Table[5];
         }
     }
-    
+    else
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            delete[] tables[i];
+        }
+        delete[] tables;
+    }
+
+    std::filesystem::path path = "../dataBase/tablesInfoSL.txt";
+
+    while (std::filesystem::exists(path))
+    {
+        // keeps waiting till it doesnt exist
+    }
+
+    std::ofstream spinLock("../dataBase/tablesInfoSL.txt"); // spinlock
+
+    std::ifstream openDb("../dataBase/tablesInfo.txt");
+
+    std::string tableInfo = "";
+
+    int tableNum = 0;
+    bool isOccupied = false;
+    int numOfPeople = 0;
+    bool isCleaned = false;
+    for (int i = 0; i < 6; i++)
+    {
+        for (int j = 0; j < 5; j++)
+        {
+            getline(openDb, tableInfo);
+            decryptString(&tableInfo[0], tableInfo.length());
+            tableNum = std::stoi(tableInfo.substr(1, tableInfo.find('\"') - 1));
+            tableInfo = tableInfo.substr(tableInfo.find('\"', 2) + 2, tableInfo.length());
+            if (tableInfo.substr(1, tableInfo.find('\"') - 1) == "true")
+            {
+                isOccupied = true;
+            }
+            else
+            {
+                isOccupied = false;
+            }
+            tableInfo = tableInfo.substr(tableInfo.find('\"', 2) + 2, tableInfo.length());
+
+            numOfPeople = std::stoi(tableInfo.substr(1, tableInfo.find('\"') - 1));
+
+            tableInfo = tableInfo.substr(tableInfo.find('\"', 2) + 2, tableInfo.length());
+
+            if (tableInfo.substr(1, tableInfo.find('\"') - 1) == "true")
+            {
+                isCleaned = true;
+            }
+            else
+            {
+                isCleaned = false;
+            }
+            tables[i][j] = Table(tableNum, isOccupied, numOfPeople, isCleaned);
+        }
+    }
+
+    openDb.close();
+    std::filesystem::remove(path);
+}
+
+int CustomerAtLobby::howManyAvailableTables()
+{
+    RefreshTables(); // refreshes the tables rq
+
+    int count = 0;
+
+    for (int i = 0; i < 6; i++)
+    {
+        for (int j = 0; j < 5; j++)
+        {
+            if (!tables[i][j].getIsOccupied())
+                count++;
+        }
+    }
+
+    return count;
+}
+
+void CustomerAtLobby::viewQueue()
+{
+    echo();
+    endwin();
+    std::queue<customerInfo> temp = customerInLine;
+    coolOutput("");
+    while (!temp.empty())
+    {
+        coolOutputNoClear("Name: ");
+        coolOutputNoClear(temp.front().firstName);
+        coolOutputNoClear(" Phone Number: ");
+        coolOutputNoClear(temp.front().phoneN);
+        coolOutputNoClear(" Party Size: ");
+        coolOutputNoClear(std::to_string(temp.front().howManyPeople));
+        coolOutputNoClear("\n");
+        temp.pop();
+    }
+    waitThisLong(5);
+
+    initscr();
+    cbreak();
+    keypad(stdscr, TRUE);
+    noecho();
+    coolOutput("");
+}
+
+std::string CustomerAtLobby::removeQuotations(std::string str)
+{
+    std::string replacement = "";
+    for (int i = 0; i < str.length(); i++)
+    {
+        if (str[i] != '\"')
+            replacement += str[i];
+    }
+    return replacement;
 }
 
 CustomerAtLobby::CustomerAtLobby() : User()
@@ -148,10 +268,9 @@ CustomerAtLobby::CustomerAtLobby() : User()
     RefreshTables();
 }
 
-
-
 void CustomerAtLobby::run()
 {
+    endwin();
     // setting up ncurses
     initscr();
     cbreak();
@@ -181,6 +300,10 @@ void CustomerAtLobby::run()
         {
             echo();
             done = true;
+        }
+        else if ((char)uInput == '$')
+        {
+            viewQueue();
         }
         else if (uInput != ERR)
         {
@@ -291,11 +414,21 @@ void CustomerAtLobby::run()
             coolOutput("Adding to queue...");
             waitThisLong(2);
 
-            int waitTime = customerInLine.size() * 10;
+            int waitTime = 0; // temp
 
-            coolOutput("Wait time is about ");
-            coolOutputNoClear(std::to_string(waitTime));
-            coolOutputNoClear(" minutes.\n");
+            if (howManyAvailableTables() == 0)
+            {
+                waitTime = customerInLine.size() * 10;
+                coolOutput("Wait time is about ");
+                coolOutputNoClear(std::to_string(waitTime));
+                coolOutputNoClear(" minutes.\n");
+            }
+            else
+            {
+                coolOutput("There is a table available for you right now!\n");
+                waitThisLong(2);
+                coolOutputNoClear("Please wait for a server to take you to your table!\n");
+            }
 
             waitThisLong(4);
         }

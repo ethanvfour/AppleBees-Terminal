@@ -44,6 +44,15 @@ void Item::setDescription(std::string description)
     this->description = description;
 }
 
+Item& Item::operator= (const Item &item)
+{
+   // Item temp(*this);
+    this->description = item.description;
+    this->name = item.name;
+    this->price = item.price;
+    return *this;
+}
+
 Item::~Item()
 {
 }

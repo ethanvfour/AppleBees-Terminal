@@ -54,6 +54,11 @@ public:
     void setDescription(std::string description);
 
     /*
+    Overloads the assignment operator for Item
+    */
+    Item& operator= (const Item &item);
+
+    /*
     Destructor for Item
     */
     ~Item();

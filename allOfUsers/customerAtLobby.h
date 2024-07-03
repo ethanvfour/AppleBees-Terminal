@@ -35,6 +35,7 @@ What the queue is gonna hold
 */
 struct customerInfo
 {
+
     std::string firstName, phoneN;
     int queueNum, howManyPeople;
 
@@ -56,11 +57,17 @@ struct customerInfo
 class CustomerAtLobby : public User
 {
 private:
+
+
     /*
     Gonna be a 2d array of a 6x5
     Assuming the restaurant has 30 tables 
     */
     Table **tables = nullptr;
+
+    /*
+    The queue of customers
+    */
     std::queue<customerInfo> customerInLine;
 
     /*
@@ -73,7 +80,27 @@ private:
     */
     void Refresh();
 
+    /*
+    Initializes the tables
+    */
     void RefreshTables();
+
+    /*
+    Shows how many tables there are available
+    */
+    int howManyAvailableTables();
+
+
+    /*
+    DEBUG FUNC
+    */
+    void viewQueue();
+
+    /*
+    Because im lazy and substr is being annoying rn
+    */
+    std::string removeQuotations(std::string str);
+
 
 public:
     /*

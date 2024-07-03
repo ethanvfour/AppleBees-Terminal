@@ -11,7 +11,17 @@ add_library(
     allOfUsers/userImp.cpp
     allOfUsers/customerAtLobby.h
     allOfUsers/customerAtLobbyImp.cpp
+    allOfUsers/customerAtTable.h
+    allOfUsers/customerAtTableImp.cpp
 )#adding all users
+
+add_library(
+    all_items
+    allOfUsers/otherObj/table.h 
+    allOfUsers/otherObj/tableImp.cpp
+    allOfUsers/otherObj/Item.h
+    allOfUsers/otherObj/ItemImp.cpp
+)
 
 
 
@@ -29,3 +39,4 @@ add_executable(appleBees main.cpp outsideFunctions/encrypt.asm)
 target_link_libraries(appleBees PRIVATE all_users)
 target_link_libraries(appleBees PRIVATE coolFunc)
 target_link_libraries(appleBees PRIVATE ${CURSES_LIBRARIES})
+target_link_libraries(appleBees PRIVATE all_items)
