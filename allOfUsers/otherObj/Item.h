@@ -3,6 +3,12 @@
 #include <string>
 
 
+/*
+Text file should look like 
+
+"<name>" "<price>" "<description>";
+*/
+
 class Item
 {
 private:

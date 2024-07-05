@@ -34,6 +34,8 @@ add_library(
     outsideFunctions/coolFunctionsImp.cpp
 )#adding some cool functions
 
+add_executable(testy test.cpp)
+target_link_libraries(testy PRIVATE ${CURSES_LIBRARIES})
 
 add_executable(appleBees main.cpp outsideFunctions/encrypt.asm)
 target_link_libraries(appleBees PRIVATE all_users)

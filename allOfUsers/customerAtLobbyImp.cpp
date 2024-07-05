@@ -475,6 +475,15 @@ CustomerAtLobby::~CustomerAtLobby()
 
     std::filesystem::remove(path); // removes spinlock
     initscr();
+
+    if(tables != nullptr)
+    {
+        for(int i = 0; i < 6; i++)
+        {
+            delete[] tables[i];
+        }
+        delete[] tables;
+    } 
 }
 
 void ncursesUserInput(std::string &uInput)

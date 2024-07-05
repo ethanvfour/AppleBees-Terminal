@@ -20,7 +20,7 @@ int main(int argc, char **args)
     */
     int choice = -1;
 
-    User *test = nullptr;
+    User *test;
     bool firstTime = true;
 
 
@@ -53,10 +53,11 @@ int main(int argc, char **args)
             test = new CustomerAtLobby();
             // endwin();
             test->run();
+            delete test;
             clear();
             break;
         case 50: // 2
-
+            
             break;
         case 51: // 3
             break;
@@ -70,12 +71,13 @@ int main(int argc, char **args)
             break;
         }
 
-        delete test;
+        
     }
 
     endwin();
 
-
+    if(test != nullptr)
+        delete test;
     
 
     return 0;

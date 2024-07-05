@@ -68,19 +68,33 @@ public:
     node<Item> * getNode(int index);
 
     /*
+    Clears linked list
+    */
+    void clearList();
+
+    /*
     Deconstructor for LinkedList
     Going to delete all nodes
     */
     ~LinkedListItems();  
 };
 
+/*
+textFile for table will look like 
+table<tableNum>Items.txt
 
+Example for table 2
+table2Items.txt
+
+Clear table will set everything to zero
+
+*/
 class CustomerAtTable : public User
 {
 private:
     Table thisTable;
     LinkedListItems items;    
-
+    bool resetTable;//will only be true if user paid and terminal is waiting for new customer
     /*
     Gets the bill and total of all items
     */
@@ -93,8 +107,36 @@ private:
 
     /*
     Adds an item to the list
+    Will be called by orderFoodOption
     */
     void addItem();
+
+    /*
+    Refreshes the items bought into db
+    Will also be called by orderFoodOption, addItem, or payBillOption
+    */
+    void refreshItems();
+
+
+    /*
+    Will be called by run
+    */
+    void orderFoodOption();
+
+    /*
+    Will be called by run
+    */
+    void playGamesOption();
+
+    /*
+    Will be called by run
+    */
+    void payBillOption();
+
+    /*
+    Will be called when they are done eating
+    */
+    void clearTable();
 
 public:
     /*

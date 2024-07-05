@@ -1,0 +1,17 @@
+The printw function in ncurses uses the same format specifiers as the standard C printf function for formatting strings. Here are some of the common specifiers:
+
+%d or %i: Signed decimal integer
+%u: Unsigned decimal integer
+%f: Decimal floating point
+%s: String of characters
+%c: Single character
+%x or %X: Unsigned hexadecimal integer
+%o: Unsigned octal
+%p: Pointer address
+%%: A literal % character
+%e or %E: Scientific notation (e.g., 1.2e+2)
+%g or %G: Use the shorter of %e or %f
+%a or %A: Hexadecimal floating point (C99)
+%n: The number of characters written so far is stored into the integer indicated by the int* (pointer) argument. No argument is converted.
+%ld, %lld: Long and long long integer specifiers for %d and %i.
+These specifiers can be used in combination with flags, width, precision, and length modifiers to control the formatting of the output. For example, %6.2f would format a floating-point number to have at least 6 characters wide and 2 characters after the decimal point.
