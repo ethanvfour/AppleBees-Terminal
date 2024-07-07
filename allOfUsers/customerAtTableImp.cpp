@@ -6,6 +6,7 @@
 #include <ctime>
 #include <unistd.h>
 #include "../outsideFunctions/coolFunctions.h"
+#include <sstream>
 
 template <class T>
 node<T>::node()
@@ -209,6 +210,69 @@ void CustomerAtTable::orderFoodOption()
 
 void CustomerAtTable::playGamesOption()
 {
+    std::string game = "1) Memory Game";
+    std::string game1 = "2) Tic Tac Toe";
+    clear();
+    move(1, 0);
+    printw("*****************************************************************************************************");
+
+    move(10, 25 - game.length() / 2);
+    printw("%s", game.c_str());
+
+    for (int i = 2; i <= 19; i++)
+    {
+        move(i, 50);
+        printw("|");
+    }
+
+    move(10, 75 - game1.length() / 2);
+    printw("%s", game1.c_str());
+
+    move(20, 0);
+    printw("*****************************************************************************************************");
+    refresh();
+
+    timeout(20000); // if not atfer 20 seconds, like come on now
+    int uChoice = -1;
+    bool weDone = false;
+    while (!weDone)
+    {
+        uChoice = getch();
+        if (uChoice == ERR)
+        {
+            weDone = true;
+            // timeout, go back to menu
+        }
+        else if ((char)uChoice == '1')
+        {
+
+            clear();
+            move(1, 0);
+            printw("*****************************************************************************************************");
+
+            move(10, 50 - game.substr(3).length() / 2);
+            printw("%s", game.substr(3).c_str());
+
+            move(20, 0);
+            printw("*****************************************************************************************************");
+            refresh();
+            waitThisLong(2);
+            
+
+
+
+
+
+            weDone = true;
+        }
+        else if ((char)uChoice == '2')
+        {
+        }
+        else
+        {
+            // ignore input
+        }
+    }
 }
 
 void CustomerAtTable::payBillOption()
@@ -217,35 +281,48 @@ void CustomerAtTable::payBillOption()
     refreshItems(); // refreshes the items just in case cuz why not lol lmao :3 :3 :3
     move(1, 0);
     printw("*****************************************************************************************************");
-    for (int i = 0, movePoint = 10; i <= items.getCount(); i++, movePoint++)
+    bool goodToPay = true;
+    if (items.getCount() != 0) // why even do this like why
     {
-        if (i == items.getCount())
+        for (int i = 0, movePoint = 10; i <= items.getCount(); i++, movePoint++)
         {
-            move(movePoint, 0);
-            printw("TOTAL: ");
-            move(movePoint, 30);
-            printw("%s", std::to_string(getBill()).c_str());
+            if (i == items.getCount())
+            {
+                std::stringstream ss;
+                ss<<std::fixed<<std::setprecision(2)<<getBill();
+                std::string bill = ss.str();
+                move(movePoint, 0);
+                printw("TOTAL: ");
+                move(movePoint, 30);
+                printw("%s", bill.c_str());
+            }
+            else
+            {
+                move(movePoint, 0);
+                printw("%s", items.getNode(i)->data.getName().c_str());
+                move(movePoint, 30);
+            }
         }
-        else
-        {
-            move(movePoint, 0);
-            printw("%s", items.getNode(i)->data.getName().c_str());
-            move(movePoint, 30);
-            printw("%s", std::to_string(items.getNode(i)->data.getPrice()).c_str());
-        }
+        move(items.getCount() + 10, 0);
+        printw("Pay now? (y/n)");
     }
-
-    move(items.getCount() + 10, 0);
-    printw("Pay now? (y/n)");
+    else
+    {
+        move(items.getCount() + 10, 50 - 15);
+        printw("You haven't ordered any items!");
+        goodToPay = false;
+    }
 
     move(items.getCount() + 12, 0);
     printw("*****************************************************************************************************");
     refresh();
+    if(!goodToPay)
+        waitThisLong(3);
 
     timeout(20000); // if not atfer 20 seconds, like come on now
     int uChoice = -1;
 
-    while ((char)uChoice != 'y' && (char)uChoice != 'Y' && (char)uChoice != 'n' && (char)uChoice != 'N')
+    while (((char)uChoice != 'y' && (char)uChoice != 'Y' && (char)uChoice != 'n' && (char)uChoice != 'N') && goodToPay)
     {
         uChoice = getch();
         if (uChoice == ERR)
@@ -256,12 +333,12 @@ void CustomerAtTable::payBillOption()
         else if ((char)uChoice == 'y' || (char)uChoice == 'Y')
         {
             // then pay
-            
+
             char buffer[100]; // temp buffer
             bool goodCreditCard = false;
             while (!goodCreditCard)
             {
-                timeout(-1);      // set indefinite timeout
+                timeout(-1); // set indefinite timeout
                 clear();
                 std::string message = "Please enter your credit card number: ";
                 std::string message1 = "Please follow the format **** **** **** ****";
@@ -336,30 +413,28 @@ void CustomerAtTable::payBillOption()
                         printw("*****************************************************************************************************");
                         move(10, 50 - 8);
                         printw("Please wait...");
-                        
+
                         move(20, 0);
                         printw("*****************************************************************************************************");
                         refresh();
                         waitThisLong(2);
-
 
                         clear();
                         move(1, 0);
                         printw("*****************************************************************************************************");
                         move(10, 50 - 9);
                         printw("Payment succesful!");
-                        
+
                         move(20, 0);
                         printw("*****************************************************************************************************");
                         refresh();
                         waitThisLong(2);
 
-
                         clear();
                         printw("*****************************************************************************************************");
                         move(10, 50 - 14);
                         printw("Thank you for dining with us!");
-                        
+
                         move(20, 0);
                         printw("*****************************************************************************************************");
                         refresh();
@@ -395,10 +470,8 @@ void CustomerAtTable::payBillOption()
     }
 }
 
-
 void CustomerAtTable::clearTable()
 {
-    
 }
 
 CustomerAtTable::CustomerAtTable()
@@ -425,14 +498,12 @@ CustomerAtTable::CustomerAtTable(int tableNum)
     makingDB.close();
 }
 
-
-
-
 /*
 CHECK IF resetTable is true!!!!!!!!!!!
 */
 void CustomerAtTable::run()
 {
+    // intialized screen
     endwin();
     initscr();
     cbreak();
@@ -448,11 +519,28 @@ void CustomerAtTable::run()
     int whichAdToPlay = 1; // there will be three ads
     while (!weDone)
     {
-        if(resetTable)
+        if (resetTable)
         {
             clearTable();
             /*
             FIGURE OUT WHAT TO DO HERE
+
+               _____
+          .- '     ' -.
+        /               \
+       |    .-'~~~'-.    |
+       |  /  _   _  \  |
+       | |  (o) (o)  | |
+       | |   (_)     | |
+        \ \  \___/  / /
+         '-._______.-'
+          /`-------'\
+        /             \
+       /   \       /   \
+      /     `-___-'     \
+     /                   \
+    /_/_/_/_/_/_/_/_/_/_/_\
+
             */
 
             resetTable = false;
@@ -637,6 +725,11 @@ void CustomerAtTable::run()
 
     clear();
     echo();
+}
+
+std::string CustomerAtTable::getTitlePrivilege()
+{
+    return title;
 }
 
 CustomerAtTable::~CustomerAtTable()

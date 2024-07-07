@@ -54,10 +54,14 @@ int main(int argc, char **args)
             // endwin();
             test->run();
             delete test;
+            test = nullptr;
             clear();
             break;
         case 50: // 2
-            
+            test = new CustomerAtTable();
+            test->run();
+            delete test;
+            test = nullptr;
             break;
         case 51: // 3
             break;
