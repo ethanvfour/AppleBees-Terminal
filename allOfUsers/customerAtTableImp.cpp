@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include "../outsideFunctions/coolFunctions.h"
 #include <sstream>
+#include <vector>
 
 template <class T>
 node<T>::node()
@@ -210,6 +211,8 @@ void CustomerAtTable::orderFoodOption()
 
 void CustomerAtTable::playGamesOption()
 {
+    static bool playedMemoryAlr = false;
+    static bool playedTicTacToeAlr = false;
     std::string game = "1) Memory Game";
     std::string game1 = "2) Tic Tac Toe";
     clear();
@@ -237,6 +240,7 @@ void CustomerAtTable::playGamesOption()
     bool weDone = false;
     while (!weDone)
     {
+        
         uChoice = getch();
         if (uChoice == ERR)
         {
@@ -245,28 +249,277 @@ void CustomerAtTable::playGamesOption()
         }
         else if ((char)uChoice == '1')
         {
-
+            static int highScore = 0;
+            std::string gameDescription = "Tap the correct arrow key as shown on scrren!";
+            std::string gameDescription1 = "Are you ready? (press any button)";
+            std::string gameDescription2 = "Press q at any time to end game";
             clear();
             move(1, 0);
             printw("*****************************************************************************************************");
 
-            move(10, 50 - game.substr(3).length() / 2);
+            move(10, 50 - (game.substr(3).length() / 2));
             printw("%s", game.substr(3).c_str());
-
+            move(11, 50 - (gameDescription.length() / 2));
+            printw("%s", gameDescription.c_str());
+            move(12, 50 - (gameDescription1.length() / 2));
+            printw("%s", gameDescription1.c_str());
+            move(13, 50 - (gameDescription2.length() / 2));
+            printw("%s", gameDescription2.c_str());
             move(20, 0);
             printw("*****************************************************************************************************");
             refresh();
-            waitThisLong(2);
-            
 
+            timeout(-1);
 
+            {
+                int dummyInt = getch();
+            }
+            /*
+            Notes section rq cuz lmaoo why not lmaoo
 
+            int ch;
+            printw("Press an arrow key (left, right, up, down) or q to quit: ");
+            while((ch = getch()) != 'q') {
+                switch(ch) {
+                    case KEY_LEFT:
+                        printw("Left Arrow\n");
+                        break;
+                    case KEY_RIGHT:
+                        printw("Right Arrow\n");
+                        break;
+                    case KEY_UP:
+                        printw("Up Arrow\n");
+                        break;
+                    case KEY_DOWN:
+                        printw("Down Arrow\n");
+                        break;
+                    default:
+                        printw("Not an arrow key!\n");
+                }
+            }
+            */
 
+            bool userLost = false, userQuit = false;
+            int score = 0, ms = 1000; // will decrease by 250 every 15 points
+                                      // once ms == 500, it will decrease by 25 every 10 points
+            // std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            std::string arr[4] = {"UP", "RIGHT", "DOWN", "LEFT"};
+            std::vector<std::string> sequence;
+            while (!userQuit)
+            {
+                srand(static_cast<unsigned int>(time(0))); // seeding srand
+                int randomNum = rand() % 4;                // rand num from 0-3
+                sequence.push_back(arr[randomNum]);
+                // now show sequence
+                for (int i = 0; i < sequence.size(); i++)
+                {
+                    clear();
+                    move(1, 0);
+                    printw("*****************************************************************************************************");
+                    std::string sequenceMem = std::to_string(i + 1);
+                    sequenceMem.append(") ");
+                    sequenceMem.append(sequence.at(i));
+                    move(10, 50 - (sequenceMem.length() / 2));
+                    printw("%s", sequenceMem.c_str());
+
+                    move(20, 0);
+                    printw("*****************************************************************************************************");
+                    refresh();
+                    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+                }
+                // now check out users sequence
+                std::string yourTurn = "Now repeat the sequence using arrow keys!";
+                clear();
+                move(1, 0);
+                printw("*****************************************************************************************************");
+
+                move(10, 50 - (yourTurn.length()/2));
+                printw("%s", yourTurn.c_str());
+
+                move(20, 0);
+                printw("*****************************************************************************************************");
+                refresh();
+                timeout(-1);
+                int movesMade = 0;
+                int userChoice = -1;
+                flushinp();
+                while (movesMade != sequence.size() && !userQuit)
+                {
+                    userChoice = getch();
+                    if ((char)userChoice == 'q')
+                    {
+                        userQuit = true;
+                        break;
+                        /*
+                        do something else here
+                        */
+
+                        std::string quitMessage = "Quitting Game...";
+                        clear();
+                        move(1, 0);
+                        printw("*****************************************************************************************************");
+
+                        move(10, 50 - (quitMessage.length() / 2));
+                        printw("%s", quitMessage.c_str());
+
+                        move(20, 0);
+                        printw("*****************************************************************************************************");
+                        refresh();
+                        waitThisLong(2);
+                    }
+                    else if (userChoice == KEY_LEFT)
+                    {
+                        if (sequence.at(movesMade) == "LEFT")
+                        {
+                            movesMade++;
+                        }
+                        else
+                        {
+                            userLost = true;
+                            break;
+                        }
+                    }
+                    else if (userChoice == KEY_RIGHT)
+                    {
+                        if (sequence.at(movesMade) == "RIGHT")
+                        {
+                            movesMade++;
+                        }
+                        else
+                        {
+                            userLost = true;
+                            break;
+                        }
+                    }
+                    else if (userChoice == KEY_UP)
+                    {
+                        if (sequence.at(movesMade) == "UP")
+                        {
+                            movesMade++;
+                        }
+                        else
+                        {
+                            userLost = true;
+                            break;
+                        }
+                    }
+                    else if (userChoice == KEY_DOWN)
+                    {
+                        if (sequence.at(movesMade) == "DOWN")
+                        {
+                            movesMade++;
+                        }
+                        else
+                        {
+                            userLost = true;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        // ignore input
+                    }
+                }
+
+                if (userLost)
+                {
+                    clear();
+                    std::string messageLost = "You have lost!";
+                    std::string messageLost1 = "Your score was ";
+                    std::string messageLost2 = "High score: ";
+                    messageLost1.append(std::to_string(score));
+                    messageLost2.append(std::to_string(highScore));
+                    move(1, 0);
+                    printw("*****************************************************************************************************");
+                    move(10, 50 - (messageLost.length() / 2));
+                    printw("%s", messageLost.c_str());
+
+                    move(11, 50 - (messageLost1.length() / 2));
+                    printw("%s", messageLost1.c_str());
+                    move(12, 50 - (messageLost2.length()/2));
+                    printw("%s", messageLost2.c_str());
+
+                    move(20, 0);
+                    printw("*****************************************************************************************************");
+                    refresh();
+
+                    waitThisLong(2);
+
+                    clear();
+                    move(1, 0);
+                    printw("*****************************************************************************************************");
+                    move(20, 0);
+                    printw("*****************************************************************************************************");
+
+                    std::string playAgain = "Play again? Y/N";
+
+                    move(10, 50 - (playAgain.length() / 2));
+                    printw("%s", playAgain.c_str());
+                    timeout(2000);
+
+                    int Choice = getch();
+                    if ((char)Choice == 'Y' || (char)Choice == 'y')
+                    {
+                        sequence.clear();
+                        score = 0;
+                        userLost = false;
+                    }
+                    else
+                    {
+                        userQuit = true;
+                    }
+                }
+                else if (userQuit)
+                {
+                    //DONT DO ANYTHING
+                }
+                else
+                {
+                    score++;
+                    if (score == 15)
+                    {
+                        ms -= 250;
+                    }
+                    else if (score == 30)
+                    {
+                        ms -= 250;
+                    }
+                    else if (ms <= 500 && (score % 10 == 0))
+                    {
+                        ms -= 10;
+                    }
+                    else if (ms == 250)
+                    {
+                        // ok dont do anything to this point it'll be too fast
+                    }
+                }
+            }
 
             weDone = true;
+
+            if(!playedMemoryAlr)
+            {
+                playedMemoryAlr = true;
+                //add charge
+
+
+                
+            }
         }
         else if ((char)uChoice == '2')
         {
+
+           
+           
+            if(!playedTicTacToeAlr)
+            {
+                playedTicTacToeAlr = true;
+                //ADD CHARGE
+
+
+
+
+            }
         }
         else
         {
@@ -289,7 +542,7 @@ void CustomerAtTable::payBillOption()
             if (i == items.getCount())
             {
                 std::stringstream ss;
-                ss<<std::fixed<<std::setprecision(2)<<getBill();
+                ss << std::fixed << std::setprecision(2) << getBill();
                 std::string bill = ss.str();
                 move(movePoint, 0);
                 printw("TOTAL: ");
@@ -316,7 +569,7 @@ void CustomerAtTable::payBillOption()
     move(items.getCount() + 12, 0);
     printw("*****************************************************************************************************");
     refresh();
-    if(!goodToPay)
+    if (!goodToPay)
         waitThisLong(3);
 
     timeout(20000); // if not atfer 20 seconds, like come on now
@@ -563,7 +816,7 @@ void CustomerAtTable::run()
             if (whichAdToPlay == 1)
             {
                 clear();
-                std::string message1 = "TRY OUT NEW DELICIOUS BURGER MEAL!";
+                std::string message1 = "TRY OUR NEW DELICIOUS BURGER MEAL!";
                 std::string message2 = "ONLY FOR $11.99!";
                 move(1, 0);
                 printw("*****************************************************************************************************");
