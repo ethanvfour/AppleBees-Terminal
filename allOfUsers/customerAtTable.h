@@ -95,6 +95,10 @@ private:
     Table thisTable;
     LinkedListItems items;    
     bool resetTable;//will only be true if user paid and terminal is waiting for new customer
+    bool playedMemoryAlr = false;
+    bool playedTicTacToeAlr = false;
+    //^^for the games
+
     /*
     Gets the bill and total of all items
     */
@@ -137,6 +141,11 @@ private:
     Will be called when they are done eating
     */
     void clearTable();
+
+    /*
+    Adds a charge to item
+    */
+    void addCharge(Item adder);
 
 public:
     /*

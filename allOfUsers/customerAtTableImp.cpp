@@ -73,6 +73,7 @@ node<Item> *LinkedListItems::getNode(int index)
 
 void LinkedListItems::clearList()
 {
+    count = 0;
     while (head != nullptr)
     {
         node<Item> *temp = head;
@@ -211,25 +212,31 @@ void CustomerAtTable::orderFoodOption()
 
 void CustomerAtTable::playGamesOption()
 {
-    static bool playedMemoryAlr = false;
-    static bool playedTicTacToeAlr = false;
+
     std::string game = "1) Memory Game";
     std::string game1 = "2) Tic Tac Toe";
+    std::string game2 = "Or press q to go back";
     clear();
     move(1, 0);
     printw("*****************************************************************************************************");
 
-    move(10, 25 - game.length() / 2);
+    move(5, 25 - game.length() / 2);
     printw("%s", game.c_str());
 
-    for (int i = 2; i <= 19; i++)
+    for (int i = 2; i <= 9; i++)
     {
         move(i, 50);
         printw("|");
     }
 
-    move(10, 75 - game1.length() / 2);
+    move(5, 75 - game1.length() / 2);
     printw("%s", game1.c_str());
+
+    move(10, 0);
+    printw("*****************************************************************************************************");
+
+    move(15, 50 - (game2.length() / 2));
+    printw("%s", game2.c_str());
 
     move(20, 0);
     printw("*****************************************************************************************************");
@@ -240,9 +247,9 @@ void CustomerAtTable::playGamesOption()
     bool weDone = false;
     while (!weDone)
     {
-        
+
         uChoice = getch();
-        if (uChoice == ERR)
+        if (uChoice == ERR || (char)uChoice == 'q' || (char)uChoice == 'Q')
         {
             weDone = true;
             // timeout, go back to menu
@@ -333,7 +340,7 @@ void CustomerAtTable::playGamesOption()
                 move(1, 0);
                 printw("*****************************************************************************************************");
 
-                move(10, 50 - (yourTurn.length()/2));
+                move(10, 50 - (yourTurn.length() / 2));
                 printw("%s", yourTurn.c_str());
 
                 move(20, 0);
@@ -423,6 +430,8 @@ void CustomerAtTable::playGamesOption()
 
                 if (userLost)
                 {
+                    if (score > highScore)
+                        highScore = score;
                     clear();
                     std::string messageLost = "You have lost!";
                     std::string messageLost1 = "Your score was ";
@@ -436,7 +445,7 @@ void CustomerAtTable::playGamesOption()
 
                     move(11, 50 - (messageLost1.length() / 2));
                     printw("%s", messageLost1.c_str());
-                    move(12, 50 - (messageLost2.length()/2));
+                    move(12, 50 - (messageLost2.length() / 2));
                     printw("%s", messageLost2.c_str());
 
                     move(20, 0);
@@ -471,7 +480,7 @@ void CustomerAtTable::playGamesOption()
                 }
                 else if (userQuit)
                 {
-                    //DONT DO ANYTHING
+                    // DONT DO ANYTHING
                 }
                 else
                 {
@@ -497,28 +506,151 @@ void CustomerAtTable::playGamesOption()
 
             weDone = true;
 
-            if(!playedMemoryAlr)
+            if (!playedMemoryAlr)
             {
                 playedMemoryAlr = true;
-                //add charge
-
-
-                
+                addCharge(Item("Memory Game", 3.00, "Charge for playing game"));
+                // add charge
             }
         }
         else if ((char)uChoice == '2')
         {
+            char board[3][3];
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    board[i][j] = '&'; // for now;
+                }
+            }
 
-           
-           
-            if(!playedTicTacToeAlr)
+            bool p1Won = false, p2Won = false;
+            bool p1Turn = true; // if false, p2 turn
+            while (!p1Won && !p2Won)
+            {
+                // flushinp();
+                clear();
+                move(1, 0);
+                printw("*****************************************************************************************************");
+
+                for (int i = 0, y = 8; i < 3; i++, y += 2)
+                {
+                    for (int j = 0, x = 48; j < 3; j++, x += 2)
+                    {
+                        move(y, x);
+                        printw("%c", board[i][j]);
+                    }
+                }
+
+                move(20, 0);
+                printw("*****************************************************************************************************");
+                refresh();
+
+                noecho();   // just in case lollllll lmaooo xdddd
+                if (p1Turn) // X
+                {
+                    p1Turn = false;
+                    bool goodSpot = false;
+                    while (!goodSpot)
+                    {
+                        int p1ChoiceX = -1, p1ChoiceY = -1;
+                        bool goodChoiceX = false, goodChoiceY = false;
+
+
+                        clear();
+                        move(1, 0);
+                        printw("*****************************************************************************************************");
+
+                        for (int i = 0, y = 8; i < 3; i++, y += 2)
+                        {
+                            for (int j = 0, x = 48; j < 3; j++, x += 2)
+                            {
+                                move(y, x);
+                                printw("%c", board[i][j]);
+                            }
+                        }
+                        std::string msg1 = "Player 1's turn!";
+                        std::string msg2 = "First give column number (1-3)";
+                        move(15, 50 - (msg1.length() / 2));
+                        printw("%s", msg1.c_str());
+                        move(16, 50 - (msg2.length() / 2));
+                        printw("%s", msg2.c_str());
+
+                        move(20, 0);
+                        printw("*****************************************************************************************************");
+                        refresh();
+
+
+                        while (!goodChoiceX)
+                        {
+
+                            flushinp();
+                            timeout(-1);
+                            p1ChoiceX = getch();
+                            if (0x31 <= p1ChoiceX && p1ChoiceX <= 0x33)
+                            {
+                                goodChoiceX = true;
+                            }
+                            else
+                            {
+                                // dont do anything
+                            }
+                        }
+
+
+                        
+                        while (!goodChoiceY)
+                        {
+                            flushinp();
+                            timeout(-1);
+                            p1ChoiceY = getch();
+                            if (0x31 <= p1ChoiceY && p1ChoiceY <= 0x33)
+                            {
+                                goodChoiceY = true;
+                            }
+                            else
+                            {
+                                // dont do anything
+                            }
+                        }
+                        if (board[(p1ChoiceY - 0x30) - 1][(p1ChoiceX - 0x30) - 1] == '&')
+                        {
+                            board[(p1ChoiceY - 0x30) - 1][(p1ChoiceX - 0x30) - 1] = 'X';
+                            goodSpot = true;
+                        }
+                        else
+                        {
+                            clear();
+                            move(1, 0);
+                            printw("*****************************************************************************************************");
+
+                            for (int i = 0, y = 8; i < 3; i++, y += 2)
+                            {
+                                for (int j = 0, x = 48; j < 3; j++, x += 2)
+                                {
+                                    move(y, x);
+                                    printw("%c", board[i][j]);
+                                }
+                            }
+
+                            move(20, 0);
+                            printw("*****************************************************************************************************");
+                            refresh();
+                            // dont do anything
+                        }
+                    }
+                }
+                else // 0
+                {
+                }
+            }
+
+            if (!playedTicTacToeAlr)
             {
                 playedTicTacToeAlr = true;
-                //ADD CHARGE
+                addCharge(Item("Tic Tac Toe", 3.00, "Charge for playing game"));
 
-
-
-
+                // ADD CHARGE
             }
         }
         else
@@ -725,6 +857,34 @@ void CustomerAtTable::payBillOption()
 
 void CustomerAtTable::clearTable()
 {
+}
+
+void CustomerAtTable::addCharge(Item adder)
+{
+    refreshItems();
+    items.add(adder);
+
+    std::filesystem::path path;
+    std::string filename = "";
+    filename += "table" + std::to_string(thisTable.getTableNum()) + "ItemsSL.txt";
+    std::string directory = "../dataBase/tableOrders/";
+    directory.append(filename);
+    path = directory;
+
+    while (std::filesystem::exists(path))
+    {
+        // keep waiting till gone
+    }
+
+    std::ofstream makingSL(directory); // makes spin lock
+
+    for (int i = 0; i < items.getCount(); i++)
+    {
+        std::string adder = "";
+    }
+
+    std::filesystem::remove(path); // removes spin lock
+    // should also add it to text file
 }
 
 CustomerAtTable::CustomerAtTable()

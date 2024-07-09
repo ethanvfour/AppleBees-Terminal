@@ -58,7 +58,7 @@ int main(int argc, char **args)
             clear();
             break;
         case 50: // 2
-            test = new CustomerAtTable();
+            test = new CustomerAtTable(2);
             test->run();
             delete test;
             test = nullptr;
